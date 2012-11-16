@@ -212,6 +212,10 @@ on post-fs
     chown root system /sys/kernel/mm/ksm/pages_to_scan
     chmod 0664 /sys/kernel/mm/ksm/pages_to_scan
 
+    # allow system to modify iosched control files
+    chown system system /sys/block/mmcblk0/queue/scheduler
+    chmod 0664 /sys/block/mmcblk0/queue/scheduler
+
 on boot
 # basic network init
     ifup lo
