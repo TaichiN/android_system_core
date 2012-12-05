@@ -1,4 +1,3 @@
-ifneq ($(TARGET_HAS_CUSTOM_LIBION),true)
 ifneq ($(TARGET_BOARD_PLATFORM),omap3)
 
 LOCAL_PATH:= $(call my-dir)
@@ -20,5 +19,4 @@ LOCAL_MODULE_TAGS := optional tests
 LOCAL_SHARED_LIBRARIES := liblog
 include $(BUILD_EXECUTABLE)
 
-endif
 endif
