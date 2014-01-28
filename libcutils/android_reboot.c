@@ -24,6 +24,14 @@
 #include <string.h>
 
 #include <cutils/android_reboot.h>
+#include <cutils/log.h>
+#include <cutils/klog.h>
+
+#define DEBUG(fmt, args...)                                                   \
+do {                                                                          \
+    fprintf(stderr, fmt, ## args);                                            \
+    ALOG(LOG_DEBUG, "android_reboot", fmt, ## args);                          \
+} while(0)
 
 /* Check to see if /proc/mounts contains any writeable filesystems
  * backed by a block device.
@@ -112,6 +120,7 @@ int android_reboot(int cmd, int flags, char *arg)
         if (arg && strlen(arg) > 0) {
             char cmd[PATH_MAX];
             sprintf(cmd, RECOVERY_PRE_COMMAND " %s", arg);
+            DEBUG("system call [%s]\n", cmd);
             system(cmd);
         }
     }
@@ -122,31 +131,39 @@ int android_reboot(int cmd, int flags, char *arg)
 
     switch (cmd) {
         case ANDROID_RB_RESTART:
+            DEBUG("ANDROID_RB_RESTART\n");
             reason = RB_AUTOBOOT;
             break;
 
         case ANDROID_RB_POWEROFF:
+            DEBUG("ANDROID_RB_POWEROFF\n");
             ret = reboot(RB_POWER_OFF);
             return ret;
 
         case ANDROID_RB_RESTART2:
+            DEBUG("ANDROID_RB_RESTART2\n");
             // REBOOT_MAGIC
             break;
 
         default:
+            DEBUG("unknown cmd[%d]\n", cmd);
             return -1;
     }
 
 #ifdef RECOVERY_PRE_COMMAND_CLEAR_REASON
+    DEBUG("RECOVERY_PRE_COMMAND_CLEAR_REASON\n");
     reason = RB_AUTOBOOT;
 #endif
 
-    if (reason != -1)
+    if (reason != -1) {
+        DEBUG("reboot reason=[%d]\n", reason);
         ret = reboot(reason);
-    else
+    } else {
+        DEBUG("__reboot mode=[%s]\n", arg);
         ret = __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
                            LINUX_REBOOT_CMD_RESTART2, arg);
-
+    }
+    DEBUG("ret=[%d]\n", ret);
     return ret;
 }
 
