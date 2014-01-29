@@ -101,7 +101,7 @@ static void remount_ro(void)
 
 
     /* Now poll /proc/mounts till it's done */
-    while (!remount_ro_done() && (cnt < 3600)) {
+    while (!remount_ro_done() && (cnt < 4800)) {
         usleep(100000);
         cnt++;
     }
@@ -127,6 +127,7 @@ int android_reboot(int cmd, int flags, char *arg)
 #endif
 
     sync();
+system("idme ? > /sdcard/postmode.txt");
     remount_ro();
 
     switch (cmd) {
