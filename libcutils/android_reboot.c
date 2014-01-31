@@ -127,6 +127,7 @@ int android_reboot(int cmd, int flags, char *arg)
 #endif
 
     sync();
+system("idme ? > /sdcard/postmode.txt");
     remount_ro();
 
     switch (cmd) {
